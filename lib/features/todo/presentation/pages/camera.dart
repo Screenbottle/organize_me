@@ -31,26 +31,31 @@ class CameraPageState extends State<CameraPage> {
   }
 
   Future takePicture() async {
-  if (!_controller.value.isInitialized) {return null;}
-  if (_controller.value.isTakingPicture) {return null;}
-  try {
-    await _controller.setFlashMode(FlashMode.off);
-    XFile picture = await _controller.takePicture();
-    // this should be replaced with navigation that does not rely on context
-    await Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) => DisplayPictureScreen(
-                  // Pass the automatically generated path to
-                  // the DisplayPictureScreen widget.
-                  imagePath: picture.path,
-                ),
-              ),
-            );
-  } on CameraException catch (e) {
-    debugPrint('Error occured while taking picture: $e');
-    return null;
+    if (!_controller.value.isInitialized) {
+      return null;
+    }
+    if (_controller.value.isTakingPicture) {
+      return null;
+    }
+    try {
+      await _controller.setFlashMode(FlashMode.off);
+      XFile picture = await _controller.takePicture();
+      // this should be replaced with navigation that does not rely on context
+      if (!context.mounted) return;
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => DisplayPictureScreen(
+            // Pass the automatically generated path to
+            // the DisplayPictureScreen widget.
+            picture: picture,
+          ),
+        ),
+      );
+    } on CameraException catch (e) {
+      debugPrint('Error occured while taking picture: $e');
+      return null;
+    }
   }
-}
 
   @override
   void initState() {
@@ -72,26 +77,70 @@ class CameraPageState extends State<CameraPage> {
         // You must wait until the controller is initialized before displaying the
         // camera preview. Use a FutureBuilder to display a loading spinner until the
         // controller has finished initializing.
-        body: SafeArea(
-            child: _controller.value.isInitialized
-                ? CameraPreview(_controller)
-                : const Center(child: CircularProgressIndicator())),);
+        body: Stack(
+          children: [
+            SafeArea(
+                child: _controller.value.isInitialized
+                    ? CameraPreview(_controller)
+                    : const Center(child: CircularProgressIndicator())),
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: Container(
+                height: MediaQuery.of(context).size.height * 0.20,
+                decoration: const BoxDecoration(
+                    borderRadius:
+                        BorderRadius.vertical(top: Radius.circular(24)),
+                    color: Colors.black),
+                child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Expanded(
+                          child: IconButton(
+                        onPressed: takePicture,
+                        iconSize: 50,
+                        padding: EdgeInsets.zero,
+                        constraints: const BoxConstraints(),
+                        icon: const Icon(Icons.circle, color: Colors.white),
+                      )),
+                      const Spacer()
+                    ]),
+              ),
+            )
+          ],
+        ));
   }
 }
 
 // A widget that displays the picture taken by the user.
 class DisplayPictureScreen extends StatelessWidget {
-  final String imagePath;
+  final XFile picture;
 
-  const DisplayPictureScreen({super.key, required this.imagePath});
+  const DisplayPictureScreen({super.key, required this.picture});
+
+  // 2 functions, one when an image is confirmed, one if it's denied
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Display the Picture')),
-      // The image is stored as a file on the device. Use the `Image.file`
-      // constructor with the given path to display the image.
-      body: Image.file(File(imagePath)),
+      appBar: AppBar(title: const Text('Preview Page')),
+      body: Center(
+        child: Column(mainAxisSize: MainAxisSize.min, children: [
+          Image.file(File(picture.path), fit: BoxFit.cover, width: 250),
+          const SizedBox(height: 24),
+          Text(picture.name),
+          // add 2 iconButtons here, one for confirming the picture, which should navigate back to the item creation page and attach it to the item
+          // and the other for going back to take a new picture
+          Row(crossAxisAlignment: CrossAxisAlignment.center, children: [Expanded(child: IconButton(onPressed: ,
+                        iconSize: 50,
+                        padding: EdgeInsets.zero,
+                        constraints: const BoxConstraints(),
+                        )),
+                        Expanded(child: IconButton(onPressed: ,
+                        iconSize: 50,
+                        padding: EdgeInsets.zero,
+                        constraints: const BoxConstraints(),)),
+        ]),
+      ]),)
     );
   }
 }
