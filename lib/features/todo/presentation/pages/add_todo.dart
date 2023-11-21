@@ -11,7 +11,9 @@ class _AddTodoPageState extends State<AddTodoPage> {
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
-      body: Text("Add todo"),
+      body: Scaffold(
+        body: Text("Add todo"),
+      ),
     );
   }
 }

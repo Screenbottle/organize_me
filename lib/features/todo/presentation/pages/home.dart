@@ -26,7 +26,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(child: widgetList[myIndex]),
-      appBar: _buildAppbar(myIndex),
+      // appBar: _buildAppbar(myIndex),
       bottomNavigationBar: BottomNavigationBar(
         onTap: _onTap,
         currentIndex: myIndex,
