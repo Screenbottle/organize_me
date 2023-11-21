@@ -1,71 +1,93 @@
 import 'package:flutter/material.dart';
 import 'package:organize_me/core/constants/colors.dart';
-import 'package:organize_me/features/todo/presentation/pages/todo.dart';
+import 'package:organize_me/features/todo/domain/entities/todo.dart';
 
-class TodoWidget extends StatelessWidget {
-  final Todo todo;
-  const TodoWidget({super.key, required this.todo});
+class TodoWidget extends StatefulWidget {
+  TodoEntity todoEntity;
+  TodoWidget({super.key, required this.todoEntity});
+
+  @override
+  State<TodoWidget> createState() => _TodoWidgetState();
+}
+
+class _TodoWidgetState extends State<TodoWidget> {
+  double cardOpacity = 1.0;
+
+  void onTap() {
+    setState(() {
+      setState(() {
+        if (widget.todoEntity.done != null) {
+          print("setState onTap körs");
+          widget.todoEntity.done = !widget.todoEntity.done!;
+        }
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
+    print("todo.done = ${widget.todoEntity.done}");
     return GestureDetector(
-      onTap: _onTap,
+      onTap: onTap,
       child: Container(
         width: 150,
         margin: const EdgeInsets.only(bottom: 20),
-        child: Card(
-          margin: const EdgeInsets.symmetric(horizontal: 20),
-          color: yellow,
-          child: Column(children: [
-            Padding(
-              padding: const EdgeInsets.only(top: 10.0),
-              child: Text(
-                todo.title ?? "",
-                style: const TextStyle(fontSize: 25),
+        child: Opacity(
+          opacity: widget.todoEntity.done! ? 0.5 : 1.0,
+          child: Card(
+            margin: const EdgeInsets.symmetric(horizontal: 20),
+            color: widget.todoEntity.done! ? lightGray : yellow,
+            child: Column(children: [
+              Padding(
+                padding: const EdgeInsets.only(top: 10.0),
+                child: Text(
+                  widget.todoEntity.title ?? "",
+                  style: const TextStyle(fontSize: 25),
+                ),
               ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(
-                  margin: const EdgeInsets.all(8.0),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(5),
-                    child: Image.asset(
-                      'assets/laundry.jpeg',
-                      fit: BoxFit.fill,
-                      width: 100,
-                      height: 150,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    margin: const EdgeInsets.all(8.0),
+                    child: ClipRRect(
+                        borderRadius: BorderRadius.circular(5),
+                        child: ColorFiltered(
+                          colorFilter: ColorFilter.mode(
+                            widget.todoEntity.done!
+                                ? Colors.grey
+                                : Colors.transparent,
+                            BlendMode.saturation,
+                          ),
+                          child: Image.asset(
+                            'assets/laundry.jpeg',
+                            fit: BoxFit.fill,
+                            width: 100,
+                            height: 150,
+                          ),
+                        )),
+                  ),
+                  const SizedBox(
+                    width: 20,
+                  ),
+                  Container(
+                    width: 150,
+                    constraints: const BoxConstraints(
+                      minHeight: 100,
                     ),
-                  ),
-                ),
-                const SizedBox(
-                  width: 20,
-                ),
-                Container(
-                  width: 150,
-                  constraints: const BoxConstraints(
-                    minHeight: 100,
-                  ),
-                  margin: const EdgeInsets.all(8),
-                  child: Padding(
-                    padding: const EdgeInsets.only(top: 10.0),
+                    margin: const EdgeInsets.all(8),
                     child: Text(
-                      todo.description ?? "",
+                      widget.todoEntity.description ?? "",
                       softWrap: true,
                       style: const TextStyle(fontSize: 20),
                     ),
                   ),
-                ),
-              ],
-            )
-          ]),
+                ],
+              )
+            ]),
+          ),
         ),
       ),
     );
-  }
-
-  void _onTap() {
-    print("hej");
   }
 }

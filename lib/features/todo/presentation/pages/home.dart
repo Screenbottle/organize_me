@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 import 'package:organize_me/core/constants/colors.dart';
-import 'package:organize_me/features/todo/presentation/pages/todo.dart';
-import 'package:organize_me/features/todo/presentation/widgets/todo_tile.dart';
+import 'package:organize_me/features/todo/presentation/pages/add_todo.dart';
+import 'package:organize_me/features/todo/presentation/pages/todo_list.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -13,51 +13,36 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final todoList = TodoList();
+  int myIndex = 0;
+  List<Widget> widgetList = const [TodoListPage(), AddTodoPage()];
 
-  @override
-  void initState() {
-    todoList.addMockData();
-    super.initState();
+  void _onTap(index) {
+    setState(() {
+      myIndex = index;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: _buildAppbar(),
-      body: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 10),
-        child: ListView(
-          children: <Widget>[
-            const Padding(
-              padding: EdgeInsets.symmetric(vertical: 20),
-              child: Center(
-                  child: Text(
-                "Todos",
-                style: TextStyle(fontSize: 30),
-              )),
-            ),
-            ...todoList.mockDataTodo.map((todo) {
-              return TodoWidget(todo: todo);
-            }),
-            const SizedBox(
-              height: 60,
-            )
-          ],
-        ),
+      body: Center(child: widgetList[myIndex]),
+      appBar: _buildAppbar(myIndex),
+      bottomNavigationBar: BottomNavigationBar(
+        onTap: _onTap,
+        currentIndex: myIndex,
+        items: const [
+          BottomNavigationBarItem(
+              icon: Icon(Icons.home), label: "Home", tooltip: "Todo List"),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.add), label: "Add Todo", tooltip: "Add todo"),
+        ],
+        selectedItemColor: darkPurple,
+        backgroundColor: lightGreen,
       ),
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: () {
-      //     // navigate to AddTodoPage
-      //   },
-      //   backgroundColor: orange,
-      //   shape: const CircleBorder(),
-      //   child: const Icon(Icons.add),
-      // ),
     );
   }
 
-  AppBar _buildAppbar() {
+  AppBar _buildAppbar(index) {
     String formattedDateTime() {
       initializeDateFormatting();
       final DateTime now = DateTime.now();
@@ -68,18 +53,15 @@ class _HomeScreenState extends State<HomeScreen> {
       return formattedDate;
     }
 
+    List<Widget> appBarTitle = [
+      Text(formattedDateTime()),
+      const Text("add todo")
+    ];
+
     return AppBar(
       backgroundColor: lightGreen,
       centerTitle: true,
-      title: Text(formattedDateTime()),
-      actions: [
-        IconButton(
-            onPressed: () {},
-            icon: const Icon(
-              Icons.add,
-              size: 40,
-            ))
-      ],
+      title: appBarTitle[index],
     );
   }
 }
