@@ -1,12 +1,12 @@
 import 'package:organize_me/features/todo/domain/entities/todo.dart';
 
 class ToDoModel extends TodoEntity {
- const ToDoModel(
+  ToDoModel(
       {final int? id,
       final String? content,
       final String? title,
       final String? description,
-      final bool? done,
+      bool? done,
       final String? createdDate,
       final String? deadlineDate});
 
@@ -21,5 +21,4 @@ class ToDoModel extends TodoEntity {
       deadlineDate: map['deadline'] ?? "",
     );
   }
-
 }
