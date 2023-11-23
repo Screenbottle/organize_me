@@ -5,6 +5,7 @@ import 'package:floor/floor.dart';
   tableName: 'todo',
 )
 class ToDoModel extends TodoEntity {
+
   @override
   @PrimaryKey(autoGenerate: true)
   final int? id;
@@ -14,7 +15,7 @@ class ToDoModel extends TodoEntity {
       final String? content,
       final String? title,
       final String? description,
-      final bool? done,
+      bool? done,
       final String? createdDate,
       final String? deadlineDate})
       : super(
@@ -38,6 +39,7 @@ class ToDoModel extends TodoEntity {
     );
   }
 
+
   factory ToDoModel.fomEntity(TodoEntity entitiy) {
     return ToDoModel(
       id: entitiy.id,
@@ -49,4 +51,5 @@ class ToDoModel extends TodoEntity {
       deadlineDate: entitiy.deadlineDate,
       );
   }
+
 }
