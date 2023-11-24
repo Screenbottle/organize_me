@@ -135,7 +135,7 @@ class DisplayPictureScreen extends StatelessWidget {
                         padding: EdgeInsets.zero,
                         constraints: const BoxConstraints(),
                         )),
-                        Expanded(child: IconButton(onPressed: ,
+                        Expanded(child: IconButton(onPressed: (() {Navigator.pop(context);}),
                         iconSize: 50,
                         padding: EdgeInsets.zero,
                         constraints: const BoxConstraints(),)),
