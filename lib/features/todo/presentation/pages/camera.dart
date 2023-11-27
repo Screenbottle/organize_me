@@ -130,12 +130,12 @@ class DisplayPictureScreen extends StatelessWidget {
           Text(picture.name),
           // add 2 iconButtons here, one for confirming the picture, which should navigate back to the item creation page and attach it to the item
           // and the other for going back to take a new picture
-          Row(crossAxisAlignment: CrossAxisAlignment.center, children: [Expanded(child: IconButton(onPressed: ,
+          Row(crossAxisAlignment: CrossAxisAlignment.center, children: [Expanded(child: IconButton(icon: const Icon(Icons.cancel_sharp),onPressed: () {},
                         iconSize: 50,
                         padding: EdgeInsets.zero,
                         constraints: const BoxConstraints(),
                         )),
-                        Expanded(child: IconButton(onPressed: (() {Navigator.pop(context);}),
+                        Expanded(child: IconButton(icon: const Icon(Icons.check_circle_outline_sharp),onPressed: (() {Navigator.pop(context);}),
                         iconSize: 50,
                         padding: EdgeInsets.zero,
                         constraints: const BoxConstraints(),)),

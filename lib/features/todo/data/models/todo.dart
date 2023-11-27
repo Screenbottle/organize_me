@@ -10,7 +10,7 @@ class ToDoModel extends TodoEntity {
   @PrimaryKey(autoGenerate: true)
   final int? id;
 
-  const ToDoModel(
+  ToDoModel(
       {this.id,
       final String? content,
       final String? title,
