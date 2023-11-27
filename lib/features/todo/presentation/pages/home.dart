@@ -26,7 +26,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(child: widgetList[myIndex]),
-      // appBar: _buildAppbar(myIndex),
+      appBar: _buildAppbar(myIndex),
       bottomNavigationBar: BottomNavigationBar(
         onTap: _onTap,
         currentIndex: myIndex,
@@ -36,7 +36,7 @@ class _HomeScreenState extends State<HomeScreen> {
           BottomNavigationBarItem(
               icon: Icon(Icons.add), label: "Add Todo", tooltip: "Add todo"),
         ],
-        selectedItemColor: darkPurple,
+        selectedItemColor: darkGreen,
         backgroundColor: lightGreen,
       ),
     );
@@ -55,11 +55,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
     List<Widget> appBarTitle = [
       Text(formattedDateTime()),
-      const Text("add todo")
+      const Text("Add Todo")
     ];
 
     return AppBar(
-      backgroundColor: lightGreen,
       centerTitle: true,
       title: appBarTitle[index],
     );

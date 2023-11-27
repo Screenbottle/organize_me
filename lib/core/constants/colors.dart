@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 const Color lightGreen = Color(0xFFebefda);
+const Color darkGreen = Color(0xFF016b56);
+const Color textFieldBackground = Color(0xFFdbe5df);
 const Color yellow = Color(0xFFFFE19C);
 const Color lightBrown = Color(0xFFDB9D47);
 const Color orange = Color(0xFFFF784F);
