@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:organize_me/core/constants/colors.dart';
 import 'package:floor/floor.dart';
 import 'package:organize_me/features/todo/domain/entities/todo.dart';
 import 'package:organize_me/features/todo/presentation/pages/home.dart';
@@ -18,7 +19,8 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         title: 'Flutter Demo',
         theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+          brightness: Brightness.light,
+          colorScheme: ColorScheme.fromSeed(seedColor: darkGreen),
           useMaterial3: true,
         ),
         home: const HomeScreen());

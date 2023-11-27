@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:intl/date_symbol_data_local.dart';
-import 'package:intl/intl.dart';
-import 'package:organize_me/core/constants/colors.dart';
 import 'package:organize_me/features/todo/presentation/widgets/todo_tile.dart';
 import '../../domain/entities/todo.dart';
 
@@ -32,7 +29,7 @@ class _TodoListState extends State<TodoListPage> {
               padding: EdgeInsets.symmetric(vertical: 20),
               child: Center(
                   child: Text(
-                "Todos",
+                "To do's",
                 style: TextStyle(fontSize: 30),
               )),
             ),
@@ -45,32 +42,6 @@ class _TodoListState extends State<TodoListPage> {
           ],
         ),
       ),
-    );
-  }
-
-  AppBar _buildAppbar() {
-    String formattedDateTime() {
-      initializeDateFormatting();
-      final DateTime now = DateTime.now();
-
-      final DateFormat customDateFormat = DateFormat('E d MMM', 'en_EN');
-      String formattedDate = customDateFormat.format(now);
-
-      return formattedDate;
-    }
-
-    return AppBar(
-      backgroundColor: lightGreen,
-      centerTitle: true,
-      title: Text(formattedDateTime()),
-      actions: [
-        IconButton(
-            onPressed: () {},
-            icon: const Icon(
-              Icons.add,
-              size: 40,
-            ))
-      ],
     );
   }
 }
