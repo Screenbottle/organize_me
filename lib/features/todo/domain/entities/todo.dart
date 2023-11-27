@@ -1,6 +1,10 @@
 import 'package:equatable/equatable.dart';
+import 'package:floor/floor.dart';
+import 'package:flutter/scheduler.dart';
+
 
 class TodoEntity extends Equatable {
+
   final int? id;
   final String? content;
   final String? title;
@@ -48,4 +52,5 @@ class TodoList {
       print("inside TodoList class, mockdata. done = ${todo.done}");
     }
   }
+  
 }
