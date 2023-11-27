@@ -49,5 +49,7 @@
 	<string>The user can take pictures and attach them to todo items.</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Does not use the microphone, but the documentation was vague.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>The user can add pictures from their gallery</string>
 </dict>
 </plist>

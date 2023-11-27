@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:organize_me/core/constants/colors.dart';
+import 'package:image_picker/image_picker.dart';
 
 class AddTodoPage extends StatefulWidget {
   const AddTodoPage({super.key});
@@ -13,6 +14,7 @@ class _AddTodoPageState extends State<AddTodoPage> {
   TextEditingController dateInput = TextEditingController();
   TextEditingController titleEditingController = TextEditingController();
   TextEditingController descriptionEditingController = TextEditingController();
+  final ImagePicker _picker = ImagePicker();
 
   @override
   void initState() {
@@ -27,6 +29,8 @@ class _AddTodoPageState extends State<AddTodoPage> {
     descriptionEditingController.dispose();
     super.dispose();
   }
+
+  
 
   @override
   Widget build(BuildContext context) {
@@ -221,4 +225,81 @@ class _AddTodoPageState extends State<AddTodoPage> {
           )),
     );
   }
+
+  Future<void> _onImageButtonPressed(
+    ImageSource source, {
+    required BuildContext context,
+    bool isMultiImage = false,
+    bool isMedia = false,
+  }) async {
+    if (context.mounted) {
+      if (isMultiImage) {
+        await _displayPickImageDialog(context,
+            (double? maxWidth, double? maxHeight, int? quality) async {
+          try {
+            final List<XFile> pickedFileList = isMedia
+                ? await _picker.pickMultipleMedia(
+                    maxWidth: maxWidth,
+                    maxHeight: maxHeight,
+                    imageQuality: quality,
+                  )
+                : await _picker.pickMultiImage(
+                    maxWidth: maxWidth,
+                    maxHeight: maxHeight,
+                    imageQuality: quality,
+                  );
+            setState(() {
+              _mediaFileList = pickedFileList;
+            });
+          } catch (e) {
+            setState(() {
+              _pickImageError = e;
+            });
+          }
+        });
+      } else if (isMedia) {
+        await _displayPickImageDialog(context,
+            (double? maxWidth, double? maxHeight, int? quality) async {
+          try {
+            final List<XFile> pickedFileList = <XFile>[];
+            final XFile? media = await _picker.pickMedia(
+              maxWidth: maxWidth,
+              maxHeight: maxHeight,
+              imageQuality: quality,
+            );
+            if (media != null) {
+              pickedFileList.add(media);
+              setState(() {
+                _mediaFileList = pickedFileList;
+              });
+            }
+          } catch (e) {
+            setState(() {
+              _pickImageError = e;
+            });
+          }
+        });
+      } else {
+        await _displayPickImageDialog(context,
+            (double? maxWidth, double? maxHeight, int? quality) async {
+          try {
+            final XFile? pickedFile = await _picker.pickImage(
+              source: source,
+              maxWidth: maxWidth,
+              maxHeight: maxHeight,
+              imageQuality: quality,
+            );
+            setState(() {
+              _setImageFileListFromFile(pickedFile);
+            });
+          } catch (e) {
+            setState(() {
+              _pickImageError = e;
+            });
+          }
+        });
+      }
+    }
+  }
+
 }
