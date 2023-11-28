@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:organize_me/core/constants/colors.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:video_player/video_player.dart';
+import 'dart:async';
 
 class AddTodoPage extends StatefulWidget {
   const AddTodoPage({super.key});
@@ -14,7 +16,24 @@ class _AddTodoPageState extends State<AddTodoPage> {
   TextEditingController dateInput = TextEditingController();
   TextEditingController titleEditingController = TextEditingController();
   TextEditingController descriptionEditingController = TextEditingController();
+
+  List<XFile>? _mediaFileList;
+
+  void _setImageFileListFromFile(XFile? value) {
+    _mediaFileList = value == null ? null : <XFile>[value];
+  }
+
+  dynamic _pickImageError;
+  bool isVideo = false;
+
+  VideoPlayerController? _controller;
+  VideoPlayerController? _toBeDisposed;
+  String? _retrieveDataError;
+
   final ImagePicker _picker = ImagePicker();
+  final TextEditingController maxWidthController = TextEditingController();
+  final TextEditingController maxHeightController = TextEditingController();
+  final TextEditingController qualityController = TextEditingController();
 
   @override
   void initState() {
@@ -27,10 +46,21 @@ class _AddTodoPageState extends State<AddTodoPage> {
     dateInput.dispose();
     titleEditingController.dispose();
     descriptionEditingController.dispose();
+
+    _disposeVideoController();
+    maxWidthController.dispose();
+    maxHeightController.dispose();
+    qualityController.dispose();
     super.dispose();
   }
 
-  
+  Future<void> _disposeVideoController() async {
+    if (_toBeDisposed != null) {
+      await _toBeDisposed!.dispose();
+    }
+    _toBeDisposed = _controller;
+    _controller = null;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -87,6 +117,7 @@ class _AddTodoPageState extends State<AddTodoPage> {
               onTap: () async {
                 DateTime? pickerDate = await showDatePicker(
                     context: context,
+                    initialDate: DateTime.now(),
                     firstDate: DateTime.now(),
                     lastDate: DateTime(2100),
                     builder: (BuildContext context, Widget? child) {
@@ -207,10 +238,11 @@ class _AddTodoPageState extends State<AddTodoPage> {
                         children: [
                           IconButton(
                             onPressed: () {
-                              //TODO show ImagePicker
+                              isVideo = false;
+                              _onImageButtonPressed(ImageSource.gallery, context: context);
                             },
                             icon: const Icon(
-                              Icons.camera_alt_outlined,
+                              Icons.photo_album_outlined,
                               size: 50,
                             ),
                           ),
@@ -229,57 +261,12 @@ class _AddTodoPageState extends State<AddTodoPage> {
   Future<void> _onImageButtonPressed(
     ImageSource source, {
     required BuildContext context,
-    bool isMultiImage = false,
     bool isMedia = false,
   }) async {
+    if (_controller != null) {
+      await _controller!.setVolume(0.0);
+    }
     if (context.mounted) {
-      if (isMultiImage) {
-        await _displayPickImageDialog(context,
-            (double? maxWidth, double? maxHeight, int? quality) async {
-          try {
-            final List<XFile> pickedFileList = isMedia
-                ? await _picker.pickMultipleMedia(
-                    maxWidth: maxWidth,
-                    maxHeight: maxHeight,
-                    imageQuality: quality,
-                  )
-                : await _picker.pickMultiImage(
-                    maxWidth: maxWidth,
-                    maxHeight: maxHeight,
-                    imageQuality: quality,
-                  );
-            setState(() {
-              _mediaFileList = pickedFileList;
-            });
-          } catch (e) {
-            setState(() {
-              _pickImageError = e;
-            });
-          }
-        });
-      } else if (isMedia) {
-        await _displayPickImageDialog(context,
-            (double? maxWidth, double? maxHeight, int? quality) async {
-          try {
-            final List<XFile> pickedFileList = <XFile>[];
-            final XFile? media = await _picker.pickMedia(
-              maxWidth: maxWidth,
-              maxHeight: maxHeight,
-              imageQuality: quality,
-            );
-            if (media != null) {
-              pickedFileList.add(media);
-              setState(() {
-                _mediaFileList = pickedFileList;
-              });
-            }
-          } catch (e) {
-            setState(() {
-              _pickImageError = e;
-            });
-          }
-        });
-      } else {
         await _displayPickImageDialog(context,
             (double? maxWidth, double? maxHeight, int? quality) async {
           try {
@@ -298,8 +285,96 @@ class _AddTodoPageState extends State<AddTodoPage> {
             });
           }
         });
-      }
     }
   }
 
+
+  Future<void> _displayPickImageDialog(
+      BuildContext context, OnPickImageCallback onPick) async {
+    return showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Add optional parameters'),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                TextField(
+                  controller: maxWidthController,
+                  keyboardType:
+                      const TextInputType.numberWithOptions(decimal: true),
+                  decoration: const InputDecoration(
+                      hintText: 'Enter maxWidth if desired'),
+                ),
+                TextField(
+                  controller: maxHeightController,
+                  keyboardType:
+                      const TextInputType.numberWithOptions(decimal: true),
+                  decoration: const InputDecoration(
+                      hintText: 'Enter maxHeight if desired'),
+                ),
+                TextField(
+                  controller: qualityController,
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(
+                      hintText: 'Enter quality if desired'),
+                ),
+              ],
+            ),
+            actions: <Widget>[
+              TextButton(
+                child: const Text('CANCEL'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+              TextButton(
+                  child: const Text('PICK'),
+                  onPressed: () {
+                    final double? width = maxWidthController.text.isNotEmpty
+                        ? double.parse(maxWidthController.text)
+                        : null;
+                    final double? height = maxHeightController.text.isNotEmpty
+                        ? double.parse(maxHeightController.text)
+                        : null;
+                    final int? quality = qualityController.text.isNotEmpty
+                        ? int.parse(qualityController.text)
+                        : null;
+                    onPick(width, height, quality);
+                    Navigator.of(context).pop();
+                  }),
+            ],
+          );
+        });
+  }
+
+  Text? _getRetrieveErrorWidget() {
+    if (_retrieveDataError != null) {
+      final Text result = Text(_retrieveDataError!);
+      _retrieveDataError = null;
+      return result;
+    }
+    return null;
+  }
+
+  Future<void> retrieveLostData() async {
+    final LostDataResponse response = await _picker.retrieveLostData();
+    if (response.isEmpty) {
+      return;
+    }
+    if (response.file != null) {
+      setState(() {
+        if (response.files == null) {
+          _setImageFileListFromFile(response.file);
+        } else {
+          _mediaFileList = response.files;
+        }
+      });
+    } else {
+      _retrieveDataError = response.exception!.code;
+    }
+  }
 }
+
+typedef OnPickImageCallback = void Function(
+    double? maxWidth, double? maxHeight, int? quality);
