@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:organize_me/core/constants/colors.dart';
-import 'package:organize_me/features/todo/domain/entities/todo.dart';
+import 'package:organize_me/features/todo/isar/models/todo.dart';
+import 'package:organize_me/features/todo/isar/provider/provider.dart';
+import 'package:provider/provider.dart';
 
 class TodoWidget extends StatefulWidget {
-  TodoEntity todoEntity;
-  TodoWidget({super.key, required this.todoEntity});
+  final ToDo todoEntity;
+  final BuildContext context;
+  const TodoWidget(
+      {super.key, required this.todoEntity, required this.context});
 
   @override
   State<TodoWidget> createState() => _TodoWidgetState();
@@ -13,28 +17,22 @@ class TodoWidget extends StatefulWidget {
 class _TodoWidgetState extends State<TodoWidget> {
   double cardOpacity = 1.0;
 
-  void onTap() {
-    setState(() {
-      setState(() {
-        if (widget.todoEntity.done != null) {
-          widget.todoEntity.done = !widget.todoEntity.done!;
-        }
-      });
-    });
+  void toggleDone() {
+    context.read<TodoProvider>().toggleDone(widget.todoEntity.id);
   }
 
   @override
   Widget build(BuildContext context) {
     return Center(
       child: GestureDetector(
-        onTap: onTap,
+        onTap: toggleDone,
         child: Container(
           width: 320,
-          margin: const EdgeInsets.only(bottom: 20),
+          margin: const EdgeInsets.only(bottom: 0),
           child: Stack(
             children: [
               Opacity(
-                opacity: widget.todoEntity.done! ? 0.7 : 1.0,
+                opacity: widget.todoEntity.done ? 0.7 : 1.0,
                 child: Container(
                   width: 320,
                   decoration: BoxDecoration(
@@ -55,12 +53,12 @@ class _TodoWidgetState extends State<TodoWidget> {
                       borderRadius: BorderRadius.circular(6.0),
                     ),
                     margin: const EdgeInsets.symmetric(horizontal: 0),
-                    color: widget.todoEntity.done! ? lightGray : yellow,
+                    color: widget.todoEntity.done ? lightGray : yellow,
                     child: Column(children: [
                       Padding(
                         padding: const EdgeInsets.only(top: 10.0),
                         child: Text(
-                          widget.todoEntity.title ?? "",
+                          widget.todoEntity.title,
                           style: const TextStyle(fontSize: 25),
                         ),
                       ),
@@ -73,7 +71,7 @@ class _TodoWidgetState extends State<TodoWidget> {
                                 borderRadius: BorderRadius.circular(5),
                                 child: ColorFiltered(
                                   colorFilter: ColorFilter.mode(
-                                    widget.todoEntity.done!
+                                    widget.todoEntity.done
                                         ? Colors.grey
                                         : Colors.transparent,
                                     BlendMode.saturation,
@@ -96,7 +94,7 @@ class _TodoWidgetState extends State<TodoWidget> {
                             ),
                             margin: const EdgeInsets.all(8),
                             child: Text(
-                              widget.todoEntity.description ?? "",
+                              widget.todoEntity.description,
                               softWrap: true,
                               style: const TextStyle(fontSize: 20),
                             ),
@@ -111,12 +109,13 @@ class _TodoWidgetState extends State<TodoWidget> {
                 bottom: 10,
                 right: 25,
                 child: Visibility(
-                    visible: widget.todoEntity.done!,
-                    child: Image.asset(
-                      "assets/check.png",
-                      width: 50,
-                      height: 50,
-                    )),
+                  visible: widget.todoEntity.done,
+                  child: Image.asset(
+                    "assets/check.png",
+                    width: 50,
+                    height: 50,
+                  ),
+                ),
               )
             ],
           ),
