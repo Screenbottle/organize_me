@@ -52,7 +52,7 @@ class _AddTodoPageState extends State<AddTodoPage> {
       final todo = ToDo()
         ..title = titleEditingController.text
         ..description = descriptionEditingController.text
-        ..content = ""
+        ..content = "" // TODO insert image URL here?
         ..createdDate = DateTime.now()
         ..deadlineDate = pickerDate!
         ..done = false;
@@ -99,17 +99,6 @@ class _AddTodoPageState extends State<AddTodoPage> {
             ElevatedButton(
               onPressed: () {
                 _saveToDB(context);
-                // if (pickerDate != null) {
-                //   final todo = ToDo()
-                //     ..title = titleEditingController.text
-                //     ..description = descriptionEditingController.text
-                //     ..content = ""
-                //     ..createdDate = DateTime.now()
-                //     ..deadlineDate = pickerDate!
-                //     ..done = false;
-
-                //   context.read<TodoProvider>().addTodo(todo);
-                // }
               },
               style: ElevatedButton.styleFrom(
                   backgroundColor: darkGreen,

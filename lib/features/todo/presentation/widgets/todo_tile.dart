@@ -38,7 +38,6 @@ class _TodoWidgetState extends State<TodoWidget> {
                   decoration: BoxDecoration(
                     color: yellow,
                     borderRadius: BorderRadius.circular(5),
-                    // shadow effect
                     boxShadow: const [
                       BoxShadow(
                           color: Colors.black54,
