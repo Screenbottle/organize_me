@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:organize_me/core/constants/colors.dart';
+import 'package:organize_me/features/todo/domain/entities/todo.dart';
+import 'package:organize_me/features/todo/domain/repository/todo_repository.dart';
+import 'package:organize_me/features/todo/domain/usescases/add_todo.dart';
 
 class AddTodoPage extends StatefulWidget {
   const AddTodoPage({super.key});
@@ -34,7 +37,7 @@ class _AddTodoPageState extends State<AddTodoPage> {
       resizeToAvoidBottomInset: false,
       body: SingleChildScrollView(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Column(
