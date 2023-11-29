@@ -3,9 +3,14 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:organize_me/core/constants/colors.dart';
+
 import 'package:image_picker/image_picker.dart';
 import 'package:video_player/video_player.dart';
 import 'dart:async';
+import 'package:organize_me/features/todo/isar/models/todo.dart';
+import 'package:organize_me/features/todo/isar/provider/provider.dart';
+import 'package:provider/provider.dart';
+import 'package:toastification/toastification.dart';
 
 class AddTodoPage extends StatefulWidget {
   const AddTodoPage({super.key});
@@ -18,6 +23,7 @@ class _AddTodoPageState extends State<AddTodoPage> {
   TextEditingController dateInput = TextEditingController();
   TextEditingController titleEditingController = TextEditingController();
   TextEditingController descriptionEditingController = TextEditingController();
+  DateTime? pickerDate;
 
   List<XFile>? _mediaFileList;
 
@@ -56,12 +62,56 @@ class _AddTodoPageState extends State<AddTodoPage> {
     super.dispose();
   }
 
+
   Future<void> _disposeVideoController() async {
     if (_toBeDisposed != null) {
       await _toBeDisposed!.dispose();
     }
     _toBeDisposed = _controller;
     _controller = null;
+  }
+    
+  // void _saveToDB(BuildContext context) {
+  //   if (pickerDate != null) {
+  //     final todo = ToDo()
+  //       ..title = titleEditingController.text
+  //       ..description = descriptionEditingController.text
+  //       ..content = ""
+  //       ..createdDate = DateTime.now()
+  //       ..deadlineDate = pickerDate!
+  //       ..done = false;
+
+  //     context.read<TodoProvider>().addTodo(todo);
+  //   }
+  // }
+
+  void _saveToDB(BuildContext context) {
+    if (pickerDate != null) {
+      final todo = ToDo()
+        ..title = titleEditingController.text
+        ..description = descriptionEditingController.text
+        ..content = "" // TODO insert image URL here?
+        ..createdDate = DateTime.now()
+        ..deadlineDate = pickerDate!
+        ..done = false;
+
+      context.read<TodoProvider>().save(todo, (bool success) {
+        if (success) {
+          toastification.show(
+              context: context,
+              type: ToastificationType.success,
+              alignment: Alignment.bottomCenter,
+              icon: const Icon(Icons.check_circle_outline),
+              borderRadius: BorderRadius.circular(12),
+              showProgressBar: false,
+              title: "Success",
+              description: "Successfully saved to the database",
+              autoCloseDuration: const Duration(seconds: 3));
+        } else {
+          print('Misslyckades med att spara todo');
+        }
+      });
+    }
   }
 
   @override
@@ -70,7 +120,7 @@ class _AddTodoPageState extends State<AddTodoPage> {
       resizeToAvoidBottomInset: false,
       body: SingleChildScrollView(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Column(
@@ -85,7 +135,9 @@ class _AddTodoPageState extends State<AddTodoPage> {
               height: 20,
             ),
             ElevatedButton(
-              onPressed: () {},
+              onPressed: () {
+                _saveToDB(context);
+              },
               style: ElevatedButton.styleFrom(
                   backgroundColor: darkGreen,
                   foregroundColor: Colors.white,
@@ -117,7 +169,7 @@ class _AddTodoPageState extends State<AddTodoPage> {
                   labelText: "Enter Date"),
               readOnly: true,
               onTap: () async {
-                DateTime? pickerDate = await showDatePicker(
+                pickerDate = await showDatePicker(
                     context: context,
                     initialDate: DateTime.now(),
                     firstDate: DateTime.now(),
@@ -139,7 +191,7 @@ class _AddTodoPageState extends State<AddTodoPage> {
 
                 if (pickerDate != null) {
                   String formattedDate =
-                      DateFormat('yyyy-MM-dd').format(pickerDate);
+                      DateFormat('yyyy-MM-dd').format(pickerDate!);
                   setState(
                     () {
                       dateInput.text = formattedDate;
