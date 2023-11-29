@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:organize_me/core/constants/colors.dart';
@@ -212,10 +214,11 @@ class _AddTodoPageState extends State<AddTodoPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text(
-                    "Add Image",
-                  ),
-                  Row(
+                  if(_mediaFileList?.isEmpty ?? true) ...[
+                    const Text(
+                      "Add Image",
+                    ),
+                    Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Row(
@@ -248,9 +251,15 @@ class _AddTodoPageState extends State<AddTodoPage> {
                           ),
                           const Text("Photo"),
                         ],
-                      )
+                      ),
                     ],
-                  )
+                  ),
+                  ] else ...[
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [Image.file(File(_mediaFileList![0].path)),],
+                    )
+                  ]
                 ],
               ),
             ),
