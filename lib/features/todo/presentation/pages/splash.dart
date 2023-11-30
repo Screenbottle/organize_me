@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:organize_me/core/constants/colors.dart';
 import 'package:organize_me/features/todo/presentation/pages/home.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -54,6 +55,7 @@ class _SplashScreenState extends State<SplashScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: lightGreen,
       body: Center(
         child: AnimatedBuilder(
           animation: _animation,

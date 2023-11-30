@@ -63,6 +63,7 @@ class _AddTodoPageState extends State<AddTodoPage> {
   }
 
 
+
   Future<void> _disposeVideoController() async {
     if (_toBeDisposed != null) {
       await _toBeDisposed!.dispose();
@@ -71,19 +72,7 @@ class _AddTodoPageState extends State<AddTodoPage> {
     _controller = null;
   }
     
-  // void _saveToDB(BuildContext context) {
-  //   if (pickerDate != null) {
-  //     final todo = ToDo()
-  //       ..title = titleEditingController.text
-  //       ..description = descriptionEditingController.text
-  //       ..content = ""
-  //       ..createdDate = DateTime.now()
-  //       ..deadlineDate = pickerDate!
-  //       ..done = false;
-
-  //     context.read<TodoProvider>().addTodo(todo);
-  //   }
-  // }
+ 
 
   void _saveToDB(BuildContext context) {
     if (pickerDate != null) {
@@ -97,16 +86,17 @@ class _AddTodoPageState extends State<AddTodoPage> {
 
       context.read<TodoProvider>().save(todo, (bool success) {
         if (success) {
-          toastification.show(
-              context: context,
-              type: ToastificationType.success,
-              alignment: Alignment.bottomCenter,
-              icon: const Icon(Icons.check_circle_outline),
-              borderRadius: BorderRadius.circular(12),
-              showProgressBar: false,
-              title: "Success",
-              description: "Successfully saved to the database",
-              autoCloseDuration: const Duration(seconds: 3));
+          Navigator.pop(context);
+          // toastification.show(
+          //     context: context,
+          //     type: ToastificationType.success,
+          //     alignment: Alignment.bottomCenter,
+          //     icon: const Icon(Icons.check_circle_outline),
+          //     borderRadius: BorderRadius.circular(12),
+          //     showProgressBar: false,
+          //     title: "Success",
+          //     description: "Successfully saved to the database",
+          //     autoCloseDuration: const Duration(seconds: 3));
         } else {
           print('Misslyckades med att spara todo');
         }
@@ -117,32 +107,40 @@ class _AddTodoPageState extends State<AddTodoPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: lightGreen,
+        title: const Text("Add Todo"),
+        centerTitle: true,
+      ),
       resizeToAvoidBottomInset: false,
       body: SingleChildScrollView(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Column(
-              children: [
-                _buildDateInput(),
-                _buildTitleInput(),
-                _buildDescriptionInput(),
-                _buildSelectImage(),
-              ],
+            const SizedBox(
+              height: 30,
             ),
+            _buildDateInput(),
+            _buildTitleInput(),
+            _buildDescriptionInput(),
+            _buildSelectImage(),
             const SizedBox(
               height: 20,
             ),
-            ElevatedButton(
-              onPressed: () {
-                _saveToDB(context);
-              },
-              style: ElevatedButton.styleFrom(
+            Padding(
+              padding: const EdgeInsets.only(bottom: 16.0),
+              child: ElevatedButton(
+                onPressed: () {
+                  _saveToDB(context);
+                },
+                style: ElevatedButton.styleFrom(
                   backgroundColor: darkGreen,
                   foregroundColor: Colors.white,
-                  minimumSize: const Size(150, 50)),
-              child: const Text("Save"),
+                  minimumSize: const Size(150, 50),
+                ),
+                child: const Text("Save"),
+              ),
             ),
           ],
         ),
