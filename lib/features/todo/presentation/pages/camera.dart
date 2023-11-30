@@ -55,6 +55,7 @@ class CameraPageState extends State<CameraPage> {
       if (!mounted) return;
       // if the "confirm button is pressed on the preview page, return to the add todo page and send the taken picture along"
       if (result) {
+        print("result: $result");
         Navigator.pop(context, picture);
       }
     } on CameraException catch (e) {

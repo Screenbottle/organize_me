@@ -7,6 +7,7 @@ import 'package:organize_me/core/constants/colors.dart';
 
 import 'package:image_picker/image_picker.dart';
 import 'package:organize_me/features/todo/presentation/pages/camera.dart';
+import 'package:toastification/toastification.dart';
 import 'package:video_player/video_player.dart';
 import 'dart:async';
 import 'package:organize_me/features/todo/isar/models/todo.dart';
@@ -72,7 +73,6 @@ class _AddTodoPageState extends State<AddTodoPage> {
     _controller = null;
   }
 
-
   void _scrollDown() {
     _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
   }
@@ -93,7 +93,7 @@ class _AddTodoPageState extends State<AddTodoPage> {
 
   void _saveToDB(BuildContext context) {
     final image = _mediaFileList?[0];
-    
+
     if (pickerDate == null) {
       _showToast("Error", "No date is selected");
     } else if (titleEditingController.text == "") {
@@ -112,8 +112,7 @@ class _AddTodoPageState extends State<AddTodoPage> {
       context.read<TodoProvider>().save(todo, (bool success) {
         if (success) {
           Navigator.pop(context);
-        } else {
-        }
+        } else {}
       });
     }
   }
@@ -138,7 +137,13 @@ class _AddTodoPageState extends State<AddTodoPage> {
             _buildDateInput(),
             _buildTitleInput(),
             _buildDescriptionInput(),
-            _buildSelectImage(),
+            _mediaFileList?.isEmpty ?? true
+                ? _buildSelectImage()
+                : Image.file(
+                    File(_mediaFileList![0].path),
+                    width: 200,
+                    height: 250,
+                  ),
             const SizedBox(
               height: 20,
             ),
@@ -290,9 +295,7 @@ class _AddTodoPageState extends State<AddTodoPage> {
                           children: [
                             IconButton(
                               onPressed: () {
-
                                 _navigateToCamera(context);
-
                               },
                               icon: const Icon(
                                 Icons.camera_alt_outlined,
@@ -325,7 +328,6 @@ class _AddTodoPageState extends State<AddTodoPage> {
                     Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-
                         Image.file(File(_mediaFileList![0].path)),
                       ],
                     )
@@ -350,7 +352,10 @@ class _AddTodoPageState extends State<AddTodoPage> {
       // when it returns, result will either be the XFile that was taken with the camera, or null
       // if it is an XFile, add it to the imagefile list
       if (result.runtimeType == XFile) {
-        _setImageFileListFromFile(result);
+        print("add todo result: $result");
+        setState(() {
+          _setImageFileListFromFile(result);
+        });
       }
     }
   }
@@ -359,10 +364,6 @@ class _AddTodoPageState extends State<AddTodoPage> {
     ImageSource source, {
     required BuildContext context,
   }) async {
-    if (_controller != null) {
-      await _controller!.setVolume(0.0);
-    }
-
     try {
       final XFile? pickedFile = await _picker.pickImage(
         source: source,
@@ -377,13 +378,10 @@ class _AddTodoPageState extends State<AddTodoPage> {
         });
       }
     } catch (e) {
-      setState(() {
-        _pickImageError = e;
-      });
+      setState(() {});
     }
   }
 
-  
   Future<void> _displayPickImageDialog(
       BuildContext context, OnPickImageCallback onPick) async {
     return showDialog(
@@ -443,7 +441,6 @@ class _AddTodoPageState extends State<AddTodoPage> {
         });
   }
 
-
   Future<void> retrieveLostData() async {
     final LostDataResponse response = await _picker.retrieveLostData();
     if (response.isEmpty) {
@@ -457,8 +454,7 @@ class _AddTodoPageState extends State<AddTodoPage> {
           _mediaFileList = response.files;
         }
       });
-    } else {
-    }
+    } else {}
   }
 }
 

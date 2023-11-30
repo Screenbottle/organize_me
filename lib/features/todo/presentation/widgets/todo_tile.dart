@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:organize_me/core/constants/colors.dart';
 import 'package:organize_me/features/todo/isar/models/todo.dart';
@@ -76,9 +78,8 @@ class _TodoWidgetState extends State<TodoWidget> {
                                         : Colors.transparent,
                                     BlendMode.saturation,
                                   ),
-                                  child: Image.asset(
-                                    'assets/laundry.jpeg',
-                                    fit: BoxFit.fill,
+                                  child: Image.file(
+                                    File(widget.todoEntity.content),
                                     width: 100,
                                     height: 150,
                                   ),
