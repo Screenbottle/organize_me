@@ -99,7 +99,8 @@ class _TodoListState extends State<TodoListPage> {
           )),
       floatingActionButton: FloatingActionButton(
         tooltip: "Add Todo",
-        backgroundColor: orange,
+        foregroundColor: Colors.white,
+        backgroundColor: darkGreen,
         onPressed: () {
           _navigateAddTodo();
         },
