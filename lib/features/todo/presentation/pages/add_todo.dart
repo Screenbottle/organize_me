@@ -12,7 +12,6 @@ import 'dart:async';
 import 'package:organize_me/features/todo/isar/models/todo.dart';
 import 'package:organize_me/features/todo/isar/provider/provider.dart';
 import 'package:provider/provider.dart';
-import 'package:toastification/toastification.dart';
 
 class AddTodoPage extends StatefulWidget {
   const AddTodoPage({super.key});
@@ -33,12 +32,10 @@ class _AddTodoPageState extends State<AddTodoPage> {
     _mediaFileList = value == null ? null : <XFile>[value];
   }
 
-  dynamic _pickImageError;
   bool isVideo = false;
 
   VideoPlayerController? _controller;
   VideoPlayerController? _toBeDisposed;
-  String? _retrieveDataError;
 
   final ImagePicker _picker = ImagePicker();
   final TextEditingController maxWidthController = TextEditingController();
@@ -97,7 +94,6 @@ class _AddTodoPageState extends State<AddTodoPage> {
           //     description: "Successfully saved to the database",
           //     autoCloseDuration: const Duration(seconds: 3));
         } else {
-          print('Misslyckades med att spara todo');
         }
       });
     }
@@ -359,7 +355,6 @@ class _AddTodoPageState extends State<AddTodoPage> {
           });
         } catch (e) {
           setState(() {
-            _pickImageError = e;
           });
         }
       });
@@ -425,14 +420,6 @@ class _AddTodoPageState extends State<AddTodoPage> {
         });
   }
 
-  Text? _getRetrieveErrorWidget() {
-    if (_retrieveDataError != null) {
-      final Text result = Text(_retrieveDataError!);
-      _retrieveDataError = null;
-      return result;
-    }
-    return null;
-  }
 
   Future<void> retrieveLostData() async {
     final LostDataResponse response = await _picker.retrieveLostData();
@@ -448,7 +435,6 @@ class _AddTodoPageState extends State<AddTodoPage> {
         }
       });
     } else {
-      _retrieveDataError = response.exception!.code;
     }
   }
 }
