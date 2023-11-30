@@ -40,9 +40,9 @@ class CameraPageState extends State<CameraPage> {
     try {
       await _controller.setFlashMode(FlashMode.off);
       XFile picture = await _controller.takePicture();
-      // this should be replaced with navigation that does not rely on context
       if (!context.mounted) return;
-      Navigator.of(context).push(
+
+      final result = await Navigator.of(context).push(
         MaterialPageRoute(
           builder: (context) => DisplayPictureScreen(
             // Pass the automatically generated path to
@@ -51,6 +51,12 @@ class CameraPageState extends State<CameraPage> {
           ),
         ),
       );
+
+      if (!mounted) return;
+      // if the "confirm button is pressed on the preview page, return to the add todo page and send the taken picture along"
+      if (result) {
+        Navigator.pop(context, picture);
+      }
     } on CameraException catch (e) {
       debugPrint('Error occured while taking picture: $e');
       return null;
@@ -122,25 +128,37 @@ class DisplayPictureScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Preview Page')),
-      body: Center(
-        child: Column(mainAxisSize: MainAxisSize.min, children: [
-          Image.file(File(picture.path), fit: BoxFit.cover, width: 250),
-          const SizedBox(height: 24),
-          Text(picture.name),
-          // add 2 iconButtons here, one for confirming the picture, which should navigate back to the item creation page and attach it to the item
-          // and the other for going back to take a new picture
-          Row(crossAxisAlignment: CrossAxisAlignment.center, children: [Expanded(child: IconButton(icon: const Icon(Icons.cancel_sharp),onPressed: () {},
-                        iconSize: 50,
-                        padding: EdgeInsets.zero,
-                        constraints: const BoxConstraints(),
-                        )),
-                        Expanded(child: IconButton(icon: const Icon(Icons.check_circle_outline_sharp),onPressed: (() {Navigator.pop(context);}),
-                        iconSize: 50,
-                        padding: EdgeInsets.zero,
-                        constraints: const BoxConstraints(),)),
-        ]),
-      ]),)
-    );
+        appBar: AppBar(title: const Text('Preview Page')),
+        body: Center(
+          child: Column(mainAxisSize: MainAxisSize.min, children: [
+            Image.file(File(picture.path), fit: BoxFit.cover, width: 250),
+            const SizedBox(height: 24),
+            Text(picture.name),
+            // add 2 iconButtons here, one for confirming the picture, which should navigate back to the item creation page and attach it to the item
+            // and the other for going back to take a new picture
+            Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+              Expanded(
+                  child: IconButton(
+                icon: const Icon(Icons.cancel_sharp),
+                onPressed: (() {
+                  Navigator.pop(context, false);
+                }),
+                iconSize: 50,
+                padding: EdgeInsets.zero,
+                constraints: const BoxConstraints(),
+              )),
+              Expanded(
+                  child: IconButton(
+                icon: const Icon(Icons.check_circle_outline_sharp),
+                onPressed: (() {
+                  Navigator.pop(context, true);
+                }),
+                iconSize: 50,
+                padding: EdgeInsets.zero,
+                constraints: const BoxConstraints(),
+              )),
+            ]),
+          ]),
+        ));
   }
 }
