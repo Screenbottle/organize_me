@@ -24,6 +24,8 @@ class _AddTodoPageState extends State<AddTodoPage> {
   TextEditingController dateInput = TextEditingController();
   TextEditingController titleEditingController = TextEditingController();
   TextEditingController descriptionEditingController = TextEditingController();
+  bool pickerDateIsEmpty = false;
+
   DateTime? pickerDate;
 
   List<XFile>? _mediaFileList;
@@ -41,6 +43,7 @@ class _AddTodoPageState extends State<AddTodoPage> {
   final TextEditingController maxWidthController = TextEditingController();
   final TextEditingController maxHeightController = TextEditingController();
   final TextEditingController qualityController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
@@ -69,9 +72,35 @@ class _AddTodoPageState extends State<AddTodoPage> {
     _controller = null;
   }
 
+
+  void _scrollDown() {
+    _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+  }
+
+  void _showToast(String title, String description) {
+    toastification.show(
+        context: context,
+        style: ToastificationStyle.fillColored,
+        type: ToastificationType.error,
+        alignment: Alignment.bottomCenter,
+        icon: const Icon(Icons.check_circle_outline),
+        borderRadius: BorderRadius.circular(12),
+        showProgressBar: false,
+        title: title,
+        description: description,
+        autoCloseDuration: const Duration(seconds: 3));
+  }
+
   void _saveToDB(BuildContext context) {
     final image = _mediaFileList?[0];
-    if (pickerDate != null) {
+    
+    if (pickerDate == null) {
+      _showToast("Error", "No date is selected");
+    } else if (titleEditingController.text == "") {
+      _showToast("Error", "You need to enter Title");
+    } else if (descriptionEditingController.text == "") {
+      _showToast("Error", "You need to enter Description");
+    } else {
       final todo = ToDo()
         ..title = titleEditingController.text
         ..description = descriptionEditingController.text
@@ -83,16 +112,6 @@ class _AddTodoPageState extends State<AddTodoPage> {
       context.read<TodoProvider>().save(todo, (bool success) {
         if (success) {
           Navigator.pop(context);
-          // toastification.show(
-          //     context: context,
-          //     type: ToastificationType.success,
-          //     alignment: Alignment.bottomCenter,
-          //     icon: const Icon(Icons.check_circle_outline),
-          //     borderRadius: BorderRadius.circular(12),
-          //     showProgressBar: false,
-          //     title: "Success",
-          //     description: "Successfully saved to the database",
-          //     autoCloseDuration: const Duration(seconds: 3));
         } else {
         }
       });
@@ -108,8 +127,8 @@ class _AddTodoPageState extends State<AddTodoPage> {
         centerTitle: true,
       ),
       resizeToAvoidBottomInset: false,
-      body: SingleChildScrollView(
-        child: Column(
+      body: ListView(controller: _scrollController, children: [
+        Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
@@ -139,7 +158,7 @@ class _AddTodoPageState extends State<AddTodoPage> {
             ),
           ],
         ),
-      ),
+      ]),
     );
   }
 
@@ -271,7 +290,9 @@ class _AddTodoPageState extends State<AddTodoPage> {
                           children: [
                             IconButton(
                               onPressed: () {
+
                                 _navigateToCamera(context);
+
                               },
                               icon: const Icon(
                                 Icons.camera_alt_outlined,
@@ -304,6 +325,7 @@ class _AddTodoPageState extends State<AddTodoPage> {
                     Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
+
                         Image.file(File(_mediaFileList![0].path)),
                       ],
                     )
@@ -340,27 +362,28 @@ class _AddTodoPageState extends State<AddTodoPage> {
     if (_controller != null) {
       await _controller!.setVolume(0.0);
     }
-    if (context.mounted) {
-      await _displayPickImageDialog(context,
-          (double? maxWidth, double? maxHeight, int? quality) async {
-        try {
-          final XFile? pickedFile = await _picker.pickImage(
-            source: source,
-            maxWidth: maxWidth,
-            maxHeight: maxHeight,
-            imageQuality: quality,
-          );
-          setState(() {
-            _setImageFileListFromFile(pickedFile);
-          });
-        } catch (e) {
-          setState(() {
-          });
-        }
+
+    try {
+      final XFile? pickedFile = await _picker.pickImage(
+        source: source,
+      );
+
+      if (pickedFile != null) {
+        setState(() {
+          _setImageFileListFromFile(pickedFile);
+        });
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          _scrollDown();
+        });
+      }
+    } catch (e) {
+      setState(() {
+        _pickImageError = e;
       });
     }
   }
 
+  
   Future<void> _displayPickImageDialog(
       BuildContext context, OnPickImageCallback onPick) async {
     return showDialog(

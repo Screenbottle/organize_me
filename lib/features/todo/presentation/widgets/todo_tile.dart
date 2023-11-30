@@ -64,9 +64,10 @@ class _TodoWidgetState extends State<TodoWidget> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Container(
-                            margin: const EdgeInsets.all(8.0),
-                            child: ClipRRect(
+                          if (widget.todoEntity.content != "")
+                            Container(
+                              margin: const EdgeInsets.all(8.0),
+                              child: ClipRRect(
                                 borderRadius: BorderRadius.circular(5),
                                 child: ColorFiltered(
                                   colorFilter: ColorFilter.mode(
@@ -81,8 +82,9 @@ class _TodoWidgetState extends State<TodoWidget> {
                                     width: 100,
                                     height: 150,
                                   ),
-                                )),
-                          ),
+                                ),
+                              ),
+                            ),
                           const SizedBox(
                             width: 20,
                           ),
