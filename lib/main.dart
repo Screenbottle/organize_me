@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:floor/floor.dart';
-import 'package:organize_me/features/todo/domain/entities/todo.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:organize_me/features/todo/presentation/bloc/local_todo_bloc.dart';
+import 'package:organize_me/features/todo/presentation/bloc/local_todo_event.dart';
+import 'package:organize_me/features/todo/presentation/injection.dart';
 import 'package:organize_me/features/todo/presentation/pages/home.dart';
 
-
-void main() {
-  runApp(const ProviderScope(child: MyApp()));
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await initDependencies();
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -14,14 +16,16 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: 'Flutter Demo',
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-          useMaterial3: true,
-        ),
-        home: const HomeScreen());
-
+    return BlocProvider<LocalTodoBloc>(
+      create: (context) => sl()..add(GetTodo()),
+      child: MaterialApp(
+          debugShowCheckedModeBanner: false,
+          title: 'Flutter Demo',
+          theme: ThemeData(
+            colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+            useMaterial3: true,
+          ),
+          home: const HomeScreen()),
+    );
   }
 }

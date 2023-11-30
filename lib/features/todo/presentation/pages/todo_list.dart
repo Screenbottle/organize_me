@@ -9,17 +9,18 @@ class TodoListPage extends StatefulWidget {
   const TodoListPage({super.key});
 
   @override
-  State<TodoListPage> createState() => _TodoListState();
+  State<StatefulWidget> createState() => _TodoListState();
 }
 
 class _TodoListState extends State<TodoListPage> {
   final todos = TodoList();
-
   @override
   void initState() {
-    todos.addMockData();
     super.initState();
+    todos.addMockData();
   }
+
+  
 
   @override
   Widget build(BuildContext context) {

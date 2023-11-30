@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import 'package:organize_me/core/constants/colors.dart';
 import 'package:organize_me/features/todo/domain/entities/todo.dart';
 
@@ -19,6 +20,7 @@ class _TodoWidgetState extends State<TodoWidget> {
         if (widget.todoEntity.done != null) {
           print("setState onTap körs");
           widget.todoEntity.done = !widget.todoEntity.done!;
+          
         }
       });
     });
