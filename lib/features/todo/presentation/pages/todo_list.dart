@@ -7,7 +7,6 @@ import 'package:organize_me/features/todo/isar/provider/provider.dart';
 import 'package:organize_me/features/todo/presentation/pages/add_todo.dart';
 import 'package:organize_me/features/todo/presentation/widgets/todo_tile.dart';
 import 'package:provider/provider.dart';
-import '../../domain/entities/todo.dart';
 
 class TodoListPage extends StatefulWidget {
   const TodoListPage({super.key});
@@ -17,13 +16,11 @@ class TodoListPage extends StatefulWidget {
 }
 
 class _TodoListState extends State<TodoListPage> {
-  final todos = TodoList();
   DateTime currentDate = DateTime.now();
   List<ToDo> filteredTodos = [];
 
   @override
   void initState() {
-    todos.addMockData();
     super.initState();
   }
 

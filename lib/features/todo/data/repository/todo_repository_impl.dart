@@ -1,9 +1,7 @@
-import 'dart:ffi';
 import 'package:organize_me/features/todo/data/data_source/local/DAO/app_database.dart';
 import 'package:organize_me/features/todo/data/models/todo.dart';
 import 'package:organize_me/features/todo/domain/entities/todo.dart';
 import 'package:organize_me/features/todo/domain/repository/todo_repository.dart';
-
 
 class TodoRepositoryImpl implements TodoRepository {
   final Appdatabase _appdatabase;
@@ -15,12 +13,11 @@ class TodoRepositoryImpl implements TodoRepository {
 
   @override
   Future<void> deleteToDo(TodoEntity todo) async {
-  return _appdatabase.todoDAO.deleteTodo(ToDoModel.fomEntity(todo));
+    return _appdatabase.todoDAO.deleteTodo(ToDoModel.fomEntity(todo));
   }
 
   @override
   Future<ToDoModel> editToDO(TodoEntity todo) async {
-    // TODO: implement editToDO
     throw UnimplementedError();
   }
 

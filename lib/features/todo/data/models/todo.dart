@@ -5,27 +5,19 @@ import 'package:floor/floor.dart';
   tableName: 'todo',
 )
 class ToDoModel extends TodoEntity {
-
   @override
   @PrimaryKey(autoGenerate: true)
   final int? id;
 
-  ToDoModel(
+  const ToDoModel(
       {this.id,
-      final String? content,
-      final String? title,
-      final String? description,
-      bool? done,
-      final String? createdDate,
-      final String? deadlineDate})
-      : super(
-            id: id,
-            content: content,
-            title: title,
-            description: description,
-            done: done,
-            createdDate: createdDate,
-            deadlineDate: deadlineDate);
+      super.content,
+      super.title,
+      super.description,
+      super.done,
+      super.createdDate,
+      super.deadlineDate})
+      : super(id: id);
 
   factory ToDoModel.fromJson(Map<String, dynamic> map) {
     return ToDoModel(
@@ -39,7 +31,6 @@ class ToDoModel extends TodoEntity {
     );
   }
 
-
   factory ToDoModel.fomEntity(TodoEntity entitiy) {
     return ToDoModel(
       id: entitiy.id,
@@ -49,7 +40,6 @@ class ToDoModel extends TodoEntity {
       done: entitiy.done,
       createdDate: entitiy.createdDate,
       deadlineDate: entitiy.deadlineDate,
-      );
+    );
   }
-
 }

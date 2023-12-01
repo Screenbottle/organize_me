@@ -109,7 +109,6 @@ class _$TodoDao extends TodoDao {
             'todo',
             (ToDoModel item) => <String, Object?>{
                   'id': item.id,
-                  'id': item.id,
                   'content': item.content,
                   'title': item.title,
                   'description': item.description,
@@ -122,7 +121,6 @@ class _$TodoDao extends TodoDao {
             'todo',
             ['id'],
             (ToDoModel item) => <String, Object?>{
-                  'id': item.id,
                   'id': item.id,
                   'content': item.content,
                   'title': item.title,

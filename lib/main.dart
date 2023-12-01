@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:organize_me/core/constants/colors.dart';
-import 'package:floor/floor.dart';
-import 'package:organize_me/features/todo/domain/entities/todo.dart';
 import 'package:organize_me/features/todo/isar/provider/provider.dart';
-import 'package:organize_me/features/todo/presentation/pages/home.dart';
 import 'package:organize_me/features/todo/presentation/pages/splash.dart';
 import 'package:provider/provider.dart';
 
