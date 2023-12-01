@@ -100,16 +100,18 @@ class CameraPageState extends State<CameraPage> {
                     color: Colors.black),
                 child: Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Expanded(
-                          child: IconButton(
-                        onPressed: takePicture,
-                        iconSize: 50,
-                        padding: EdgeInsets.zero,
-                        constraints: const BoxConstraints(),
-                        icon: const Icon(Icons.circle, color: Colors.white),
-                      )),
-                      const Spacer()
+                        child: IconButton(
+                          onPressed: takePicture,
+                          iconSize: 50,
+                          padding: EdgeInsets.zero,
+                          constraints: const BoxConstraints(),
+                          icon: const Icon(Icons.circle, color: Colors.white),
+                        ),
+                      ),
+                      // const Spacer()
                     ]),
               ),
             )
